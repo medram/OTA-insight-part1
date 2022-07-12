@@ -1,6 +1,8 @@
 from django.contrib import admin
-
+from admin_interface.models import Theme
 from .models import Invoice
+
+admin.site.unregister(Theme)
 
 
 @admin.register(Invoice)
