@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import Group
 from django.utils.safestring import mark_safe
 from django_countries.fields import CountryField
+from django.urls import reverse_lazy
 
 
 class UserManager(BaseUserManager):
@@ -65,6 +66,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     @admin.display(description=_('Password'))
     def change_password(self, obj=None):
         return mark_safe("<a href='../password' class='btn btn-primary btn-sm text-white'>%s</a>" % _('Change Password?'))
+
+    @admin.display(description=_('Show invoices'))
+    def get_all_invoices_link(self):
+        reversed_url = reverse_lazy('admin:invoices_invoice_changelist')
+        return mark_safe("<a href='%s?user=%s'>Show invoices</a>" % (reversed_url, self.id))
+
+    @admin.display(description=_('Actions'))
+    def show_actions(self):
+        return self.get_all_invoices_link()
 
     def __str__(self):
         return self.email

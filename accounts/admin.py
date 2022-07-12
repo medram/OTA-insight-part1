@@ -8,8 +8,9 @@ from .models import CustomUser, CustomGroup
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'username', 'is_active',
-                    'is_staff', 'date_joined')
+                    'is_staff', 'date_joined', 'show_actions')
     list_display_links = ('email',)
+    readonly_fields = ('show_actions',)
     list_filter = ('is_active', 'is_staff', 'is_superuser',
                    'updated', 'date_joined', 'last_login')
     search_fields = ('email', 'username', 'name')
