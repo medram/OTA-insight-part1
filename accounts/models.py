@@ -36,7 +36,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     company_name = models.CharField(
         _('Company name'), max_length=30, null=True, blank=True)
 
-    country = CountryField(blank_label='(select country)')
+    country = CountryField(
+        blank_label='(select country)', blank=True, null=True)
     # Could be e.g. '$' or 'USD'
     currency = models.CharField(
         max_length=3, default='$', help_text=_("Could be e.g. '$' or 'USD'"))
