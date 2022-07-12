@@ -15,7 +15,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = (UsersBilledOverAmountFilter, 'is_active', 'is_staff', 'is_superuser',
                    'updated', 'date_joined', 'last_login')
     search_fields = ('email', 'username', 'name')
-    readonly_fields = ('change_password', 'updated',
+    readonly_fields = ('change_password', 'recent_invoices', 'total_invoiced_amount_past_12_months', 'updated',
                        'date_joined', 'last_login')
     filter_horizontal = ('user_permissions', 'groups')
 
@@ -24,6 +24,9 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {
             'fields': ('username', 'email', 'name', 'company_name', 'country', 'currency', 'change_password')
+        }),
+        (_('Recent invoices info'), {
+            'fields': ('total_invoiced_amount_past_12_months', 'recent_invoices')
         }),
         (_('Permissions & Groups'), {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')

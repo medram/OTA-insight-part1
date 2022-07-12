@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
@@ -6,6 +8,7 @@ from django.contrib.auth.models import Group
 from django.utils.safestring import mark_safe
 from django_countries.fields import CountryField
 from django.urls import reverse_lazy
+from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
@@ -70,7 +73,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     @admin.display(description=_('Show invoices'))
     def get_all_invoices_link(self):
         reversed_url = reverse_lazy('admin:invoices_invoice_changelist')
-        return mark_safe("<a href='%s?user=%s'>Show invoices</a>" % (reversed_url, self.id))
+        return mark_safe("<b><a href='%s?user=%s'>Show invoices?</a></b>" % (reversed_url, self.id))
 
     @admin.display(description=_('Actions'))
     def show_actions(self):
@@ -80,9 +83,33 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def show_total_amount(self):
         return f"{self.currency}{self.total_amount()}"
 
+    @admin.display(description=_('Recent Invoices'))
+    def recent_invoices(self):
+        invoices = self.invoices.order_by('-date')[:3]
+        content = ""
+        for invoice in invoices:
+            content += "<a href='%s'>%s</a><br>" % (
+                reverse_lazy('admin:invoices_invoice_change',
+                             args=(invoice.id,)),
+                invoice.invoice_number
+            )
+        content += "<a href='%s?user=%d'>%s</a>" % (
+            reverse_lazy('admin:invoices_invoice_changelist'),
+            self.id,
+            _('See All invoices?')
+        )
+        return mark_safe(content)
+
     # TODO: this function could be optimized (e.g. using caching) for large and heavy load applications.
     def total_amount(self):
         return sum(invoice.amount for invoice in self.invoices.all())
+
+    @admin.display(description=_('Total invoiced amount for the past 12 months'))
+    def total_invoiced_amount_past_12_months(self):
+        # 12 months = 1 year ~= 356 days
+        start_date = timezone.now() - datetime.timedelta(days=365)
+        print(start_date)
+        return "%s%.2f" % (self.currency, sum(invoice.amount for invoice in self.invoices.filter(date__gte=start_date).all()))
 
     def __str__(self):
         return self.email

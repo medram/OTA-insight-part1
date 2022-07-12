@@ -17,6 +17,9 @@ class Invoice(models.Model):
     user = models.ForeignKey(
         User, related_name='invoices', on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ('-date',)
+
     def __str__(self):
         return self.invoice_number
 
