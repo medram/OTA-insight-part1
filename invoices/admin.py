@@ -12,7 +12,7 @@ class InvoiceAdmin(admin.ModelAdmin):
     list_filter = ('is_paid', 'user', 'date')
     autocomplete_fields = ('user',)
     # I've added 'user__username', 'user__email' fields for much better search
-    search_fields = ('user__name', 'user__username', 'user__email')
+    search_fields = ('invoice_number', 'user__name', 'user__username', 'user__email')
 
     def has_delete_permission(self, req, obj=None):
         return False
