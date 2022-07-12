@@ -108,11 +108,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def total_invoiced_amount_past_12_months(self):
         # 12 months = 1 year ~= 356 days
         start_date = timezone.now() - datetime.timedelta(days=365)
-        print(start_date)
         return "%s%.2f" % (self.currency, sum(invoice.amount for invoice in self.invoices.filter(date__gte=start_date).all()))
 
     def __str__(self):
-        return self.email
+        # I've used username & email instead of 'name' (because 'name' is optional field).
+        return "%s (%s)" % (self.username, self.email)
 
 
 class CustomGroup(Group):
