@@ -3,15 +3,16 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.models import Group
 from .models import CustomUser, CustomGroup
+from .filters import UsersBilledOverAmountFilter
 
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'username', 'is_active',
-                    'is_staff', 'date_joined', 'show_actions')
+                    'is_staff', 'show_total_amount', 'date_joined', 'show_actions')
     list_display_links = ('email',)
-    readonly_fields = ('show_actions',)
-    list_filter = ('is_active', 'is_staff', 'is_superuser',
+    readonly_fields = ('show_actions', 'show_total_amount')
+    list_filter = (UsersBilledOverAmountFilter, 'is_active', 'is_staff', 'is_superuser',
                    'updated', 'date_joined', 'last_login')
     search_fields = ('email', 'username', 'name')
     readonly_fields = ('change_password', 'updated',

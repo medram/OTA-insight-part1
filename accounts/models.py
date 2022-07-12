@@ -76,6 +76,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def show_actions(self):
         return self.get_all_invoices_link()
 
+    @admin.display(description=_('Total Amount'))
+    def show_total_amount(self):
+        return f"{self.currency}{self.total_amount()}"
+
+    # TODO: this function could be optimized (e.g. using caching) for large and heavy load applications.
+    def total_amount(self):
+        return sum(invoice.amount for invoice in self.invoices.all())
+
     def __str__(self):
         return self.email
 
